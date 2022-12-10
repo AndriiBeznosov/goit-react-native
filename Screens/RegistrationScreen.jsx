@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+//RegistrationScreen
+
+import React, { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -12,7 +14,12 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
+  Dimensions,
 } from "react-native";
+
+// import * as Font from "expo-font";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
 export default function RegistrationScreen() {
   const [login, setLogin] = useState("");
@@ -20,12 +27,25 @@ export default function RegistrationScreen() {
   const [password, setPassword] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [secureText, setSecureText] = useState(true);
-
+  const [dimensions, setDimensions] = useState(
+    Dimensions.get("window").width - 20 * 2,
+  );
   const initialState = {
     name: login,
     email: email,
     password: password,
   };
+
+  useEffect(() => {
+    const onChange = () => {
+      const width = Dimensions.get("window").width - 20 * 2;
+
+      setDimensions(width);
+    };
+    Dimensions.addEventListener("change", onChange);
+
+    return () => subscription?.remove();
+  }, []);
 
   const loginHandler = (text) => setLogin(text);
   const emailHandler = (text) => setEmail(text);
@@ -47,8 +67,29 @@ export default function RegistrationScreen() {
     setEmail("");
     setPassword("");
   };
+
+  const [fontsLoaded] = useFonts({
+    "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
+    "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
+    "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
+    "Roboto-Blackitalic": require("./assets/fonts/Roboto-BlackItalic.ttf"),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
+    <TouchableWithoutFeedback
+      onPress={keyboardHide}
+      onLayout={onLayoutRootView}
+    >
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
@@ -71,27 +112,44 @@ export default function RegistrationScreen() {
               </View>
               <Text style={styles.title}>Регистрация</Text>
 
-              <View style={{ marginBottom: 16 }}>
+              <View
+                style={{
+                  ...styles.input,
+                  marginBottom: 16,
+                  width: dimensions,
+                }}
+              >
                 <TextInput
-                  style={styles.input}
+                  style={styles.inputText}
                   value={login}
                   placeholder="Логин"
                   onChangeText={loginHandler}
                   onFocus={() => setIsShowKeyboard(true)}
                 />
               </View>
-              <View style={{ marginBottom: 16 }}>
+              <View
+                style={{
+                  ...styles.input,
+                  marginBottom: 16,
+                  width: dimensions,
+                }}
+              >
                 <TextInput
-                  style={styles.input}
+                  style={styles.inputText}
                   value={email}
                   placeholder="Адрес електронной почти"
                   onChangeText={emailHandler}
                   onFocus={() => setIsShowKeyboard(true)}
                 />
               </View>
-              <View style={styles.password}>
+              <View
+                style={{
+                  ...styles.password,
+                  width: dimensions,
+                }}
+              >
                 <TextInput
-                  style={styles.input}
+                  style={styles.inputText}
                   value={password}
                   placeholder="Пароль"
                   secureTextEntry={secureText}
@@ -108,7 +166,7 @@ export default function RegistrationScreen() {
               </View>
               <TouchableOpacity
                 activeOpacity={0.1}
-                style={styles.button}
+                style={{ ...styles.button, width: dimensions }}
                 onPress={onSubmitForm}
               >
                 <Text style={styles.textButton}>Зарегистрироваться</Text>
@@ -117,7 +175,7 @@ export default function RegistrationScreen() {
                 <Text style={styles.textLogin}>Уже есть аккаунт? Войти</Text>
               </TouchableOpacity>
             </View>
-            {/* <StatusBar style="auto" /> */}
+            <StatusBar style="auto" />
           </KeyboardAvoidingView>
         </ImageBackground>
       </View>
@@ -159,25 +217,32 @@ const styles = StyleSheet.create({
     right: -12,
   },
   title: {
+    fontFamily: "Roboto-Bold",
     fontSize: 30,
-    fontWeight: "bold",
     marginBottom: 33,
     textAlign: "center",
   },
 
   input: {
-    width: 343,
     height: 50,
     padding: 16,
     borderWidth: 1,
-
-    fontSize: 16,
     borderRadius: 8,
     borderColor: "#E8E8E8",
     backgroundColor: "#F6F6F6",
   },
+  inputText: {
+    fontSize: 16,
+    fontFamily: "Roboto-Regular",
+  },
   password: {
     position: "relative",
+    height: 50,
+    padding: 16,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: "#E8E8E8",
+    backgroundColor: "#F6F6F6",
   },
   show: {
     position: "absolute",
@@ -189,21 +254,21 @@ const styles = StyleSheet.create({
     color: "#1B4371",
   },
   button: {
-    width: 343,
     height: 51,
     padding: 16,
-    fontSize: 16,
     backgroundColor: "#FF6C00",
     borderRadius: 100,
     alignItems: "center",
     marginTop: 43,
   },
   textButton: {
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#ffffff",
   },
   textLogin: {
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
