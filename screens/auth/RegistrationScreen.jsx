@@ -1,6 +1,6 @@
 //RegistrationScreen
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -16,12 +16,11 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { isLoginOn } from "../../redux/auth/slice";
 
-// import * as Font from "expo-font";
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-
-export default function RegistrationScreen() {
+export const RegistrationScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,11 +29,6 @@ export default function RegistrationScreen() {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 20 * 2,
   );
-  const initialState = {
-    name: login,
-    email: email,
-    password: password,
-  };
 
   useEffect(() => {
     const onChange = () => {
@@ -44,7 +38,7 @@ export default function RegistrationScreen() {
     };
     Dimensions.addEventListener("change", onChange);
 
-    return () => subscription?.remove();
+    // return () => subscription?.remove();
   }, []);
 
   const loginHandler = (text) => setLogin(text);
@@ -57,43 +51,28 @@ export default function RegistrationScreen() {
 
   const onSubmitForm = () => {
     keyboardHide();
-    console.log(initialState);
-  };
-
-  const keyboardHide = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
+    dispatch(
+      isLoginOn({
+        isLogin: true,
+        isError: null,
+      }),
+    );
     setLogin("");
     setEmail("");
     setPassword("");
   };
 
-  const [fontsLoaded] = useFonts({
-    "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
-    "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
-    "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-Blackitalic": require("./assets/fonts/Roboto-BlackItalic.ttf"),
-  });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
 
   return (
-    <TouchableWithoutFeedback
-      onPress={keyboardHide}
-      onLayout={onLayoutRootView}
-    >
+    <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
-          source={require("./assets/images/PhotoBG.jpg")}
+          source={require("../../assets/images/PhotoBG.jpg")}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -107,7 +86,7 @@ export default function RegistrationScreen() {
               <View style={styles.photo}>
                 <Image
                   style={styles.icon}
-                  source={require("./assets/images/add.png")}
+                  source={require("../../assets/images/add.png")}
                 />
               </View>
               <Text style={styles.title}>Регистрация</Text>
@@ -171,7 +150,7 @@ export default function RegistrationScreen() {
               >
                 <Text style={styles.textButton}>Зарегистрироваться</Text>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                 <Text style={styles.textLogin}>Уже есть аккаунт? Войти</Text>
               </TouchableOpacity>
             </View>
@@ -181,7 +160,7 @@ export default function RegistrationScreen() {
       </View>
     </TouchableWithoutFeedback>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

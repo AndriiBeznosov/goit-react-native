@@ -1,6 +1,6 @@
 // //LoginScreen
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -16,12 +16,13 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { isLoginOn } from "../../redux/auth/slice";
 
-// import * as Font from "expo-font";
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
+// import { useRout } from "../../router";
 
-export default function LoginScreen() {
+export const LoginScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -33,6 +34,9 @@ export default function LoginScreen() {
     email: email,
     password: password,
   };
+  // useEffect(() => {
+  //   dispatch(isLoginOn(true));
+  // }, []);
 
   useEffect(() => {
     const onChange = () => {
@@ -42,7 +46,7 @@ export default function LoginScreen() {
     };
     Dimensions.addEventListener("change", onChange);
 
-    return () => subscription?.remove();
+    // return () => subscription?.remove();
     // return () => {
     //   Dimensions.removeEventListener("change", onChange);
     // };
@@ -57,45 +61,31 @@ export default function LoginScreen() {
 
   const onSubmitForm = () => {
     keyboardHide();
-    console.log(initialState);
+    dispatch(
+      isLoginOn({
+        isLogin: true,
+        isError: null,
+      }),
+    );
+    setEmail("");
+    setPassword("");
+    // useRout(true);
   };
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-
-    setEmail("");
-    setPassword("");
   };
 
-  const [fontsLoaded] = useFonts({
-    "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
-    "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
-    "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
-  });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
-    <TouchableWithoutFeedback
-      onPress={keyboardHide}
-      onLayout={onLayoutRootView}
-    >
+    <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
-          source={require("./assets/images/PhotoBG.jpg")}
+          source={require("../../assets/images/PhotoBG.jpg")}
         >
           <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            behavior={Platform.OS == "ios" ? "padding" : "heigth"}
           >
             <View
               style={{
@@ -117,7 +107,6 @@ export default function LoginScreen() {
                   value={email}
                   placeholder="Адрес електронной почти"
                   onChangeText={emailHandler}
-                  onFocus={() => setIsShowKeyboard(true)}
                 />
               </View>
               <View
@@ -149,8 +138,10 @@ export default function LoginScreen() {
               >
                 <Text style={styles.textButton}>Зарегистрироваться</Text>
               </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={styles.textLogin}>Уже есть аккаунт? Войти</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Registr")}>
+                <Text style={styles.textLogin}>
+                  Нет аккаунта? Зарегистрироваться
+                </Text>
               </TouchableOpacity>
             </View>
             <StatusBar style="auto" />
@@ -159,7 +150,7 @@ export default function LoginScreen() {
       </View>
     </TouchableWithoutFeedback>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
