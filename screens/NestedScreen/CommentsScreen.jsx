@@ -24,7 +24,8 @@ export const CommentsScreen = ({ route }) => {
   const commentHandler = (text) => setComment(text);
 
   const onSubmitComment = () => {
-    setCommentList([...commentList, { comment }]);
+    const data = new Date().toLocaleString();
+    setCommentList([...commentList, { comment, data }]);
     setIsShowKeyboard(false);
     keyboardHide();
     setComment("");
@@ -71,20 +72,37 @@ export const CommentsScreen = ({ route }) => {
                 marginBottom: 32,
               }}
             >
-              <Text
+              <View
                 style={{
                   flex: 1,
-                  padding: 16,
-                  backgroundColor: "rgba(0, 0, 6, 0.03)",
-                  // width: "100%",
 
+                  backgroundColor: "rgba(0, 0, 6, 0.03)",
                   marginRight: 20,
                   overflow: "hidden",
                   borderRadius: 10,
+                  padding: 16,
                 }}
               >
-                {item.comment}
-              </Text>
+                <Text
+                  style={{
+                    overflow: "hidden",
+                    fontSize: 13,
+                    lineHeight: 18,
+                    color: "#212121",
+                    marginBottom: 8,
+                  }}
+                >
+                  {item.comment}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color: "#BDBDBD",
+                  }}
+                >
+                  {item.data}
+                </Text>
+              </View>
               <View
                 style={{
                   width: 28,
@@ -111,7 +129,8 @@ export const CommentsScreen = ({ route }) => {
               inputType="text"
               style={{
                 ...styles.inputText,
-                paddingLeft: 30,
+                paddingLeft: 15,
+                paddingRight: 55,
               }}
               value={comment}
               placeholder="Комментировать..."

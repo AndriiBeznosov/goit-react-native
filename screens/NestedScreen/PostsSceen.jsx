@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import { useSelector } from "react-redux";
-import { Feather } from "@expo/vector-icons";
+import { Feather, AntDesign } from "@expo/vector-icons";
 
 export const PostsScreen = ({ route, navigation }) => {
   const { email } = useSelector((state) => state.auth);
@@ -98,30 +98,61 @@ export const PostsScreen = ({ route, navigation }) => {
                   alignItems: "flex-end",
                 }}
               >
-                <TouchableOpacity
-                  style={{ flexDirection: "row", alignItems: "flex-end" }}
-                  onPress={() => {
-                    navigation.navigate("Comments", { item });
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "flex-end",
                   }}
                 >
-                  <Feather
-                    name="message-circle"
-                    size={24}
-                    color="#bdbdbd"
-                    style={{ transform: [{ scaleX: -1 }] }}
-                  />
-                  <Text
-                    style={{ marginLeft: 10, fontSize: 16, color: "#bdbdbd" }}
-                  >
-                    {like}
-                  </Text>
-                </TouchableOpacity>
-                <View style={{ flexDirection: "row" }}>
                   <TouchableOpacity
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "flex-end",
+                      marginRight: 10,
+                    }}
+                    onPress={() => {
+                      navigation.navigate("Comments", { item });
+                    }}
+                  >
+                    <Feather
+                      name="message-circle"
+                      size={22}
+                      color="#bdbdbd"
+                      style={{ transform: [{ scaleX: -1 }] }}
+                    />
+
+                    <Text
+                      style={{ marginLeft: 5, fontSize: 16, color: "#bdbdbd" }}
+                    >
+                      {like}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{ flexDirection: "row", alignItems: "flex-end" }}
+                  >
+                    <AntDesign name="like2" size={22} color="#bdbdbd" />
+                    <Text
+                      style={{ marginLeft: 5, fontSize: 16, color: "#bdbdbd" }}
+                    >
+                      0
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View>
+                  <TouchableOpacity
+                    style={{ flexDirection: "row", alignItems: "flex-end" }}
                     onPress={() => {
                       navigation.navigate("Map", { item });
                     }}
                   >
+                    <Feather
+                      style={{ marginRight: 5 }}
+                      name="map-pin"
+                      size={18}
+                      color="#bdbdbd"
+                    />
                     <Text>{item.territory}</Text>
                   </TouchableOpacity>
                 </View>

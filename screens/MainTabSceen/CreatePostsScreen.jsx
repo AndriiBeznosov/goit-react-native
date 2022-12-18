@@ -76,11 +76,7 @@ export const CreatePostsScreen = ({ navigation }) => {
       photo: photo,
       location: location,
       territory: locationCity
-        ? locationCity.country +
-          ", " +
-          locationCity.region +
-          ", " +
-          locationCity.city
+        ? locationCity.country + ", " + locationCity.city
         : "",
     });
 
@@ -166,11 +162,7 @@ export const CreatePostsScreen = ({ navigation }) => {
               }}
               value={
                 locationCity
-                  ? locationCity.country +
-                    ", " +
-                    locationCity.region +
-                    ", " +
-                    locationCity.city
+                  ? locationCity.country + ", " + locationCity.city
                   : ""
               }
               placeholder="Местность..."
