@@ -1,5 +1,3 @@
-"use strict";
-
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
@@ -7,9 +5,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
-import { Home } from "../Home";
-import { RegistrationScreen } from "../auth/RegistrationScreen";
-import { LoginScreen } from "../auth/LoginScreen";
+import { Home } from "../MainStackScreen/Home/Home";
+import { RegistrationScreen } from "../MainStackScreen/auth/RegistrationScreen";
+import { LoginScreen } from "../MainStackScreen/auth/LoginScreen";
 
 const MainStack = createStackNavigator();
 
@@ -33,6 +31,8 @@ export const Main = () => {
     return null;
   }
 
+  // useEffect(())
+
   return (
     <NavigationContainer onLayout={onLayoutRootView}>
       {isLogin ? (
@@ -45,6 +45,7 @@ export const Main = () => {
               name="Registr"
               component={RegistrationScreen}
             />
+
             <MainStack.Screen
               options={{ headerShown: false }}
               name="Login"

@@ -17,12 +17,11 @@ import {
   Dimensions,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { isLoginOn } from "../../redux/auth/slice";
-
-// import { useRout } from "../../router";
+import { isLoginOn } from "../../../redux/auth/slice";
 
 export const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -34,9 +33,6 @@ export const LoginScreen = ({ navigation }) => {
     email: email,
     password: password,
   };
-  // useEffect(() => {
-  //   dispatch(isLoginOn(true));
-  // }, []);
 
   useEffect(() => {
     const onChange = () => {
@@ -60,16 +56,14 @@ export const LoginScreen = ({ navigation }) => {
   };
 
   const onSubmitForm = () => {
+    if (!password && !email) {
+      return;
+    }
     keyboardHide();
-    dispatch(
-      isLoginOn({
-        isLogin: true,
-        isError: null,
-      }),
-    );
+    dispatch(isLoginOn({ email: email, password: password, isLogin: true }));
     setEmail("");
     setPassword("");
-    // useRout(true);
+    // navigation.navigate("Home");
   };
 
   const keyboardHide = () => {
@@ -82,7 +76,7 @@ export const LoginScreen = ({ navigation }) => {
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
-          source={require("../../assets/images/PhotoBG.jpg")}
+          source={require("../../../assets/images/PhotoBG.jpg")}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : "heigth"}
@@ -103,6 +97,8 @@ export const LoginScreen = ({ navigation }) => {
                 }}
               >
                 <TextInput
+                  autoFocus={true}
+                  inputType={email}
                   style={styles.inputText}
                   value={email}
                   placeholder="Адрес електронной почти"

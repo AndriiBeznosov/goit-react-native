@@ -1,14 +1,13 @@
 "use strict";
 import React from "react";
 import { StyleSheet } from "react-native";
+import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SimpleLineIcons, Feather, AntDesign } from "@expo/vector-icons";
 
-import PostsScreen from "./mainSceen/PostsScreen";
-import CreatePostsScreen from "./mainSceen/CreatePostsScreen";
-
-import ProfileScreen from "./mainSceen/ProfileScreen";
-import { View } from "react-native";
+import { DefaultPostsScreen } from "../../MainTabSceen/DefaultPostsScreen";
+import { CreatePostsScreen } from "../../MainTabSceen/CreatePostsScreen";
+import { ProfileScreen } from "../../MainTabSceen/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,19 +29,21 @@ export const Home = () => {
             <SimpleLineIcons name="grid" size={20} color={color} />
           ),
         }}
-        name="Публикации"
-        component={PostsScreen}
+        name="DefaultPostsScreen"
+        component={DefaultPostsScreen}
       />
       <Tab.Screen
         options={{
-          headerShown: false,
+          // title: "Создать публикацию",
+          // headerShown: false,
+          title: "Создать публикацию",
           tabBarIcon: ({ focus, size, color }) => (
             <View style={styles.plusBtn}>
               <AntDesign name="plus" size={25} color={"#FFFFFF"} />
             </View>
           ),
         }}
-        name="Create Posts"
+        name="Create"
         component={CreatePostsScreen}
       />
       <Tab.Screen

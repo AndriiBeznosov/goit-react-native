@@ -1,7 +1,7 @@
 //RegistrationScreen
 
 import React, { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
+// import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   View,
@@ -17,7 +17,7 @@ import {
   Dimensions,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { isLoginOn } from "../../redux/auth/slice";
+import { addUser } from "../../../redux/auth/slice";
 
 export const RegistrationScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -50,16 +50,22 @@ export const RegistrationScreen = ({ navigation }) => {
   };
 
   const onSubmitForm = () => {
+    if (!login && !password && !email) {
+      return;
+    }
+
     keyboardHide();
     dispatch(
-      isLoginOn({
-        isLogin: true,
-        isError: null,
+      addUser({
+        name: login,
+        email: email,
+        password: password,
       }),
     );
     setLogin("");
     setEmail("");
     setPassword("");
+    navigation.navigate("Login");
   };
 
   const keyboardHide = () => {
@@ -72,7 +78,7 @@ export const RegistrationScreen = ({ navigation }) => {
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
-          source={require("../../assets/images/PhotoBG.jpg")}
+          source={require("../../../assets/images/PhotoBG.jpg")}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -86,7 +92,7 @@ export const RegistrationScreen = ({ navigation }) => {
               <View style={styles.photo}>
                 <Image
                   style={styles.icon}
-                  source={require("../../assets/images/add.png")}
+                  source={require("../../../assets/images/add.png")}
                 />
               </View>
               <Text style={styles.title}>Регистрация</Text>
@@ -99,6 +105,7 @@ export const RegistrationScreen = ({ navigation }) => {
                 }}
               >
                 <TextInput
+                  inputType="text"
                   style={styles.inputText}
                   value={login}
                   placeholder="Логин"
@@ -114,6 +121,7 @@ export const RegistrationScreen = ({ navigation }) => {
                 }}
               >
                 <TextInput
+                  inputType={email}
                   style={styles.inputText}
                   value={email}
                   placeholder="Адрес електронной почти"
@@ -154,7 +162,7 @@ export const RegistrationScreen = ({ navigation }) => {
                 <Text style={styles.textLogin}>Уже есть аккаунт? Войти</Text>
               </TouchableOpacity>
             </View>
-            <StatusBar style="auto" />
+            {/* <StatusBar style="auto" /> */}
           </KeyboardAvoidingView>
         </ImageBackground>
       </View>
