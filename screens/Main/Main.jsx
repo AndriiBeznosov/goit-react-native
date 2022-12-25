@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
@@ -8,11 +8,18 @@ import * as SplashScreen from "expo-splash-screen";
 import { Home } from "../MainStackScreen/Home/Home";
 import { RegistrationScreen } from "../MainStackScreen/auth/RegistrationScreen";
 import { LoginScreen } from "../MainStackScreen/auth/LoginScreen";
+import { authStateChange } from "../../redux/auth/operations";
 
 const MainStack = createStackNavigator();
 
 export const Main = () => {
-  const { isLogin } = useSelector((state) => state.auth);
+  const { stateChange } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(authStateChange());
+  }, [stateChange]);
 
   const [fontsLoaded] = useFonts({
     "Roboto-Bold": require("../../assets/fonts/Roboto-Bold.ttf"),
@@ -31,11 +38,9 @@ export const Main = () => {
     return null;
   }
 
-  // useEffect(())
-
   return (
     <NavigationContainer onLayout={onLayoutRootView}>
-      {isLogin ? (
+      {stateChange ? (
         <Home />
       ) : (
         <>

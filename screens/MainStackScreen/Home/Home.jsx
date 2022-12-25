@@ -1,4 +1,3 @@
-"use strict";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { View } from "react-native";
@@ -16,14 +15,11 @@ export const Home = () => {
     <Tab.Navigator
       screenOptions={{
         tabBarShowLabel: false,
-        // tabBarActiveTintColor: "tomato",
         tabBarInactiveTintColor: "silver",
       }}
     >
       <Tab.Screen
         options={{
-          // tabBarBadge: 1,
-
           headerShown: false,
           tabBarIcon: ({ focus, size, color }) => (
             <SimpleLineIcons name="grid" size={20} color={color} />
@@ -36,7 +32,7 @@ export const Home = () => {
         options={{
           // title: "Создать публикацию",
           // headerShown: false,
-          title: "Создать публикацию",
+          title: "Додати публікацію",
           tabBarIcon: ({ focus, size, color }) => (
             <View style={styles.plusBtn}>
               <AntDesign name="plus" size={25} color={"#FFFFFF"} />
@@ -48,6 +44,7 @@ export const Home = () => {
       />
       <Tab.Screen
         options={{
+          title: "Профіль",
           headerShown: false,
           tabBarIcon: ({ focus, size, color }) => (
             <Feather name="user" size={size} color={color} />

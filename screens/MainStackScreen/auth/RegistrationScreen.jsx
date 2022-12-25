@@ -1,7 +1,4 @@
-//RegistrationScreen
-
 import React, { useEffect, useState } from "react";
-// import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   View,
@@ -17,11 +14,11 @@ import {
   Dimensions,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { addUser } from "../../../redux/auth/slice";
+import { authSignUpUser } from "../../../redux/auth/operations";
 
 export const RegistrationScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  const [login, setLogin] = useState("");
+  const [nickName, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -37,8 +34,6 @@ export const RegistrationScreen = ({ navigation }) => {
       setDimensions(width);
     };
     Dimensions.addEventListener("change", onChange);
-
-    // return () => subscription?.remove();
   }, []);
 
   const loginHandler = (text) => setLogin(text);
@@ -50,22 +45,15 @@ export const RegistrationScreen = ({ navigation }) => {
   };
 
   const onSubmitForm = () => {
-    if (!login && !password && !email) {
+    if (!nickName && !password && !email) {
       return;
     }
 
     keyboardHide();
-    dispatch(
-      addUser({
-        name: login,
-        email: email,
-        password: password,
-      }),
-    );
+    dispatch(authSignUpUser({ email, password, nickName }));
     setLogin("");
     setEmail("");
     setPassword("");
-    navigation.navigate("Login");
   };
 
   const keyboardHide = () => {
@@ -95,7 +83,7 @@ export const RegistrationScreen = ({ navigation }) => {
                   source={require("../../../assets/images/add.png")}
                 />
               </View>
-              <Text style={styles.title}>Регистрация</Text>
+              <Text style={styles.title}>Реєстрація</Text>
 
               <View
                 style={{
@@ -107,8 +95,8 @@ export const RegistrationScreen = ({ navigation }) => {
                 <TextInput
                   inputType="text"
                   style={styles.inputText}
-                  value={login}
-                  placeholder="Логин"
+                  value={nickName}
+                  placeholder="Логін"
                   onChangeText={loginHandler}
                   onFocus={() => setIsShowKeyboard(true)}
                 />
@@ -124,7 +112,7 @@ export const RegistrationScreen = ({ navigation }) => {
                   inputType={email}
                   style={styles.inputText}
                   value={email}
-                  placeholder="Адрес електронной почти"
+                  placeholder="Адреса електронної пошти"
                   onChangeText={emailHandler}
                   onFocus={() => setIsShowKeyboard(true)}
                 />
@@ -148,7 +136,7 @@ export const RegistrationScreen = ({ navigation }) => {
                   style={styles.show}
                   onPress={toggleSecureText}
                 >
-                  <Text style={styles.showText}>Показать</Text>
+                  <Text style={styles.showText}>Показати</Text>
                 </TouchableOpacity>
               </View>
               <TouchableOpacity
@@ -156,10 +144,12 @@ export const RegistrationScreen = ({ navigation }) => {
                 style={{ ...styles.button, width: dimensions }}
                 onPress={onSubmitForm}
               >
-                <Text style={styles.textButton}>Зарегистрироваться</Text>
+                <Text style={styles.textButton}>Зареєструватись</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                <Text style={styles.textLogin}>Уже есть аккаунт? Войти</Text>
+                <Text style={styles.textLogin}>
+                  Вже є обліковий запис? Увійти
+                </Text>
               </TouchableOpacity>
             </View>
             {/* <StatusBar style="auto" /> */}

@@ -17,52 +17,82 @@ import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import * as LocationGeocodedAddress from "expo-location";
 
+import db from "../../firebase/config";
+
 import {
   MaterialIcons,
   Feather,
   EvilIcons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
 export const CreatePostsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [camera, setCamera] = useState(null);
-  const accessToCameras = Camera.requestCameraPermissionsAsync();
-  const [photo, setPhoto] = useState("");
+  const [photo, setPhoto] = useState(null);
   const [namePhoto, setNamePhoto] = useState("");
-
   const [location, setLocation] = useState(null);
   const [locationCity, setLocationCity] = useState("");
-  const namePhotoHandler = (text) => setNamePhoto(text);
-  // const locationHandler = (text) => setLocationPhono(text);
-
   const [data, setData] = useState(null);
-
   const [colorBtn, setColorBtn] = useState("#f6f6f6");
   const [colorTextBtn, setColorTextBtn] = useState("#bdbdbd");
+  const [statusLocation, setStatusLocation] = useState(false);
+  const [statusPhoto, setStatusPhoto] = useState(false);
+  const [loadingLocation, useLoadingLocation] = useState(false);
+
+  const { userId, nickName } = useSelector((state) => state.auth);
+
+  const namePhotoHandler = (text) => setNamePhoto(text);
+
+  const clearFormPost = () => {
+    setPhoto(null);
+    setNamePhoto("");
+    setData(null);
+    setColorBtn("#f6f6f6");
+    setColorTextBtn("#bdbdbd");
+    useLoadingLocation(false);
+    setLocationCity("");
+  };
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
+      if (!statusPhoto) {
+        let { status } = await Camera.requestCameraPermissionsAsync();
+
+        if (status !== "granted") {
+          setErrorMsg("Permission to access location was denied");
+          return;
+        }
+        setStatusPhoto(true);
+      }
+      if (!statusLocation) {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+
+        if (status !== "granted") {
+          setErrorMsg("Permission to access location was denied");
+          return;
+        }
+        setStatusLocation(true);
       }
     })();
   }, []);
 
-  const TakePhoto = async () => {
-    const photo = await camera.takePictureAsync(accessToCameras);
+  const takePhoto = async () => {
+    const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
-
-    let location = await Location.getCurrentPositionAsync();
-    setLocation(location.coords);
+    useLoadingLocation(true);
+    let location = await Location.getCurrentPositionAsync({});
+    await setLocation(location.coords);
     locationGeocodedAddress(location);
   };
 
   const refreshPhoto = async () => {
-    const photo = await camera.takePictureAsync(accessToCameras);
+    const photo = await camera.takePictureAsync();
     setPhoto(photo.uri);
+    let location = await Location.getCurrentPositionAsync({});
+    await setLocation(location.coords);
+    locationGeocodedAddress(location);
   };
 
   const keyboardHide = () => {
@@ -86,8 +116,20 @@ export const CreatePostsScreen = ({ navigation }) => {
     }
   }, [namePhoto, photo, locationCity, location]);
 
+  const locationGeocodedAddress = async (location) => {
+    let locationGeocoded = await LocationGeocodedAddress.reverseGeocodeAsync({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    });
+
+    setLocationCity(locationGeocoded[0]);
+    useLoadingLocation(false);
+  };
+
   const onSubmitCard = async () => {
+    uploadPostToServer();
     await navigation.navigate("Posts", data);
+
     setPhoto("");
     setNamePhoto("");
     keyboardHide();
@@ -96,14 +138,42 @@ export const CreatePostsScreen = ({ navigation }) => {
     setLocationCity("");
     setLocation(null);
   };
+  const uploadPostToServer = async () => {
+    const photoServer = await uploadPhotoToServer();
+    await db
+      .firestore()
+      .collection("posts")
+      .add({
+        name: namePhoto,
+        photo: photoServer,
+        location: location,
+        territory: locationCity
+          ? locationCity.country + ", " + locationCity.city
+          : "",
+        userId,
+        nickName,
+      })
+      .then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+      })
+      .catch((error) => {
+        console.error("Error adding document: ", error);
+      });
+  };
 
-  const locationGeocodedAddress = async (location) => {
-    let locationGeocoded = await LocationGeocodedAddress.reverseGeocodeAsync({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    });
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+    const uniquePostId = Date.now().toString();
+    await db.storage().ref(`postImage/${uniquePostId}`).put(file);
 
-    setLocationCity(locationGeocoded[0]);
+    const processedPhoto = db
+      .storage()
+      .ref("postImage")
+      .child(uniquePostId)
+      .getDownloadURL();
+
+    return processedPhoto;
   };
 
   return (
@@ -135,7 +205,7 @@ export const CreatePostsScreen = ({ navigation }) => {
             ) : (
               <TouchableOpacity
                 style={styles.btnCamera}
-                onPress={!photo ? TakePhoto : refreshPhoto}
+                onPress={!photo ? takePhoto : refreshPhoto}
               >
                 <MaterialIcons name="camera-alt" size={35} color="#bdbdbd" />
               </TouchableOpacity>
@@ -147,7 +217,7 @@ export const CreatePostsScreen = ({ navigation }) => {
               inputType="text"
               style={styles.inputText}
               value={namePhoto}
-              placeholder="Название..."
+              placeholder="Назва..."
               onChangeText={namePhotoHandler}
               onFocus={() => setIsShowKeyboard(true)}
             />
@@ -165,7 +235,7 @@ export const CreatePostsScreen = ({ navigation }) => {
                   ? locationCity.country + ", " + locationCity.city
                   : ""
               }
-              placeholder="Местность..."
+              placeholder="Місцевість..."
               // disabled={true}
 
               // onChangeText={locationHandler}
@@ -177,6 +247,11 @@ export const CreatePostsScreen = ({ navigation }) => {
               size={22}
               color="#bdbdbd"
             />
+            {loadingLocation && (
+              <Text style={styles.loadingLocation}>
+                Завантаження локації, потрібно зачекати...
+              </Text>
+            )}
           </View>
           <TouchableOpacity
             activeOpacity={0.5}
@@ -185,7 +260,7 @@ export const CreatePostsScreen = ({ navigation }) => {
             disabled={colorBtn !== "#FF6C00" ? true : false}
           >
             <Text style={{ ...styles.textButton, color: colorTextBtn }}>
-              Опубликовать
+              Опублікувати
             </Text>
           </TouchableOpacity>
           {!isShowKeyboard && (
@@ -193,7 +268,7 @@ export const CreatePostsScreen = ({ navigation }) => {
               activeOpacity={0.7}
               style={styles.buttonDelete}
               // disabled={true}
-              // onPress={onSubmitForm}
+              onPress={clearFormPost}
             >
               <EvilIcons name="trash" size={40} color="#bdbdbd" />
             </TouchableOpacity>
@@ -299,5 +374,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 10,
     right: 10,
+  },
+  loadingLocation: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    color: "rgba(255,0,0,0.3)",
+    fontSize: 16,
+    fontWeight: "400",
+    lineHeight: 19,
   },
 });

@@ -17,7 +17,9 @@ import {
   Dimensions,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { isLoginOn } from "../../../redux/auth/slice";
+// import { isLoginOn } from "../../../redux/auth/slice";
+
+import { authSignInUser } from "../../../redux/auth/operations";
 
 export const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -29,10 +31,6 @@ export const LoginScreen = ({ navigation }) => {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 20 * 2,
   );
-  const initialState = {
-    email: email,
-    password: password,
-  };
 
   useEffect(() => {
     const onChange = () => {
@@ -59,10 +57,12 @@ export const LoginScreen = ({ navigation }) => {
     if (!password && !email) {
       return;
     }
+
     keyboardHide();
-    dispatch(isLoginOn({ email: email, password: password, isLogin: true }));
+    dispatch(authSignInUser({ email, password }));
     setEmail("");
     setPassword("");
+    // setState(initialState);
     // navigation.navigate("Home");
   };
 
@@ -87,7 +87,7 @@ export const LoginScreen = ({ navigation }) => {
                 paddingBottom: isShowKeyboard ? 20 : 45,
               }}
             >
-              <Text style={styles.title}>Войти</Text>
+              <Text style={styles.title}>Вхід</Text>
 
               <View
                 style={{
@@ -101,7 +101,7 @@ export const LoginScreen = ({ navigation }) => {
                   inputType={email}
                   style={styles.inputText}
                   value={email}
-                  placeholder="Адрес електронной почти"
+                  placeholder="Адреса електронної пошти"
                   onChangeText={emailHandler}
                 />
               </View>
@@ -124,7 +124,7 @@ export const LoginScreen = ({ navigation }) => {
                   style={styles.show}
                   onPress={toggleSecureText}
                 >
-                  <Text style={styles.showText}>Показать</Text>
+                  <Text style={styles.showText}>Показати</Text>
                 </TouchableOpacity>
               </View>
               <TouchableOpacity
@@ -132,11 +132,11 @@ export const LoginScreen = ({ navigation }) => {
                 style={{ ...styles.button, width: dimensions }}
                 onPress={onSubmitForm}
               >
-                <Text style={styles.textButton}>Зарегистрироваться</Text>
+                <Text style={styles.textButton}>Увійти</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate("Registr")}>
                 <Text style={styles.textLogin}>
-                  Нет аккаунта? Зарегистрироваться
+                  Немає облікового запису? Зареєструватись
                 </Text>
               </TouchableOpacity>
             </View>

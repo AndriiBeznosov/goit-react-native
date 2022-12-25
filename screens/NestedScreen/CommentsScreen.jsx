@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -15,17 +15,45 @@ import {
 
 import { AntDesign } from "@expo/vector-icons";
 
+import db from "../../firebase/config";
+import { useSelector } from "react-redux";
+
 export const CommentsScreen = ({ route }) => {
   const [comment, setComment] = useState("");
   const [commentList, setCommentList] = useState([]);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const { photo } = route.params.item;
-  console.log(commentList);
+  const { nickName } = useSelector((state) => state.auth);
+
+  const { photo, id } = route.params.item;
+
+  const createPosts = async () => {
+    const data = new Date().toLocaleString();
+    await db
+      .firestore()
+      .collection("posts")
+      .doc(id)
+      .collection("comments")
+      .add({ comment, data, nickName });
+  };
+  const getAllPostsComments = async () => {
+    await db
+      .firestore()
+      .collection("posts")
+      .doc(id)
+      .collection("comments")
+      .onSnapshot((data) =>
+        setCommentList(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))),
+      );
+  };
+  useEffect(() => {
+    getAllPostsComments();
+  }, []);
+
   const commentHandler = (text) => setComment(text);
 
   const onSubmitComment = () => {
-    const data = new Date().toLocaleString();
-    setCommentList([...commentList, { comment, data }]);
+    createPosts();
+    // setCommentList([...commentList, { comment, data }]);
     setIsShowKeyboard(false);
     keyboardHide();
     setComment("");
