@@ -23,7 +23,7 @@ export const CommentsScreen = ({ route }) => {
   const [commentList, setCommentList] = useState([]);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const { nickName } = useSelector((state) => state.auth);
-
+  console.log(commentList);
   const { photo, id } = route.params.item;
 
   const createPosts = async () => {
@@ -95,7 +95,8 @@ export const CommentsScreen = ({ route }) => {
             <View
               style={{
                 flex: 1,
-                flexDirection: "row",
+                flexDirection:
+                  item.nickName !== nickName ? "row-reverse" : "row",
                 justifyContent: "space-between",
                 marginBottom: 32,
               }}
@@ -105,7 +106,8 @@ export const CommentsScreen = ({ route }) => {
                   flex: 1,
 
                   backgroundColor: "rgba(0, 0, 6, 0.03)",
-                  marginRight: 20,
+                  marginRight: item.nickName === nickName ? 20 : 0,
+                  marginLeft: item.nickName !== nickName ? 20 : 0,
                   overflow: "hidden",
                   borderRadius: 10,
                   padding: 16,

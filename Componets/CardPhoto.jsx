@@ -1,15 +1,60 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
 
 import db from "../firebase/config";
 
 import { Feather, AntDesign } from "@expo/vector-icons";
 
 export const CardPhoto = ({ item, navigation }) => {
-  const [like, setLike] = useState("0");
+  const [like, setLike] = useState([]);
   const [commentList, setCommentList] = useState([]);
 
   const { id } = item;
+
+  const { email } = useSelector((state) => state.auth);
+
+  const likeCollection = () => {
+    const li = like.find((element) => element.email === email);
+
+    if (li !== undefined) {
+      togglePostLike(li);
+
+      return;
+    }
+    createPostsLike();
+  };
+
+  const togglePostLike = async (li) => {
+    await db
+      .firestore()
+      .collection("posts")
+      .doc(id)
+      .collection("like")
+      .doc(li.id)
+      .delete()
+      .then(() => {
+        console.log("Document delete!");
+      })
+      .catch((error) => {
+        console.error("Error writing document: ", error);
+      });
+  };
+
+  const createPostsLike = async () => {
+    await db
+      .firestore()
+      .collection("posts")
+      .doc(id)
+      .collection("like")
+      .add({ email })
+      .then(() => {
+        console.log("Document add!");
+      })
+      .catch((error) => {
+        console.error("Error writing document: ", error);
+      });
+  };
 
   const getAllPostsComments = async () => {
     await db
@@ -21,9 +66,21 @@ export const CardPhoto = ({ item, navigation }) => {
         setCommentList(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))),
       );
   };
+  const getAllPostslike = async () => {
+    await db
+      .firestore()
+      .collection("posts")
+      .doc(id)
+      .collection("like")
+      .onSnapshot((data) =>
+        setLike(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))),
+      );
+  };
+
   useEffect(() => {
     getAllPostsComments();
-  }, []);
+    getAllPostslike();
+  }, [item]);
 
   return (
     <View style={{ marginBottom: 32 }}>
@@ -84,10 +141,21 @@ export const CardPhoto = ({ item, navigation }) => {
 
           <TouchableOpacity
             style={{ flexDirection: "row", alignItems: "flex-end" }}
+            onPress={likeCollection}
           >
-            <AntDesign name="like2" size={22} color="#bdbdbd" />
-            <Text style={{ marginLeft: 5, fontSize: 16, color: "#bdbdbd" }}>
-              {like}
+            <AntDesign
+              name="like2"
+              size={22}
+              color={like.length ? "#FF6C00" : "#bdbdbd"}
+            />
+            <Text
+              style={{
+                marginLeft: 5,
+                fontSize: 16,
+                color: like.length ? "#FF6C00" : "#bdbdbd",
+              }}
+            >
+              {like.length ? like.length : "0"}
             </Text>
           </TouchableOpacity>
         </View>
