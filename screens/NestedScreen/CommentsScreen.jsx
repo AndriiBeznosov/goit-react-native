@@ -46,7 +46,7 @@ export const CommentsScreen = ({ route }) => {
   };
   useEffect(() => {
     getAllPostsComments();
-  }, [commentList]);
+  }, []);
 
   const commentHandler = (text) => setComment(text);
 

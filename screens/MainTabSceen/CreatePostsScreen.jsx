@@ -45,7 +45,6 @@ export const CreatePostsScreen = ({ navigation }) => {
 
   const namePhotoHandler = (text) => setNamePhoto(text);
 
-  console.log(photo);
   const clearFormPost = () => {
     setPhoto(null);
     setNamePhoto("");
@@ -102,6 +101,7 @@ export const CreatePostsScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
+    console.log(photo);
     setData({
       name: namePhoto,
       photo: photo,
@@ -189,7 +189,13 @@ export const CreatePostsScreen = ({ navigation }) => {
           >
             {photo ? (
               <>
-                <View style={styles.containerPhoto}>
+                <View
+                  style={{
+                    ...styles.containerPhoto,
+                    width: isShowKeyboard ? 190 : 300,
+                    height: isShowKeyboard ? 130 : 200,
+                  }}
+                >
                   <Image style={styles.image} source={{ uri: photo }} />
                 </View>
                 <TouchableOpacity
@@ -204,7 +210,10 @@ export const CreatePostsScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </>
             ) : (
-              <TouchableOpacity style={styles.btnCamera} onPress={takePhoto}>
+              <TouchableOpacity
+                style={styles.btnCamera}
+                onPress={!photo ? takePhoto : refreshPhoto}
+              >
                 <MaterialIcons name="camera-alt" size={35} color="#fff" />
               </TouchableOpacity>
             )}
@@ -233,9 +242,6 @@ export const CreatePostsScreen = ({ navigation }) => {
                   : ""
               }
               placeholder="Місцевість..."
-              // disabled={true}
-
-              // onChangeText={locationHandler}
               onFocus={() => setIsShowKeyboard(true)}
             />
             <Feather
@@ -290,7 +296,7 @@ const styles = StyleSheet.create({
     borderColor: "#212121",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "red",
+    backgroundColor: "#212121",
     marginBottom: 8,
   },
   btnCamera: {
@@ -348,8 +354,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     left: 10,
-    width: 300,
-    height: 200,
+    // width: 300,
+    // height: 200,
     borderWidth: 2,
     borderColor: "red",
   },
