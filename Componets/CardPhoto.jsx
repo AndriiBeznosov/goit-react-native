@@ -80,14 +80,13 @@ export const CardPhoto = ({ item, navigation }) => {
   useEffect(() => {
     getAllPostsComments();
     getAllPostslike();
-  }, [item]);
+  }, []);
 
   return (
     <View style={{ marginBottom: 32 }}>
       <Image
         source={{ uri: item.photo }}
         style={{
-          // marginHorizontal: 10,
           height: 240,
           width: "100%",
           borderRadius: 8,
@@ -118,6 +117,7 @@ export const CardPhoto = ({ item, navigation }) => {
               marginRight: 10,
             }}
             onPress={() => {
+              console.log(item);
               navigation.navigate("Comments", { item });
             }}
           >

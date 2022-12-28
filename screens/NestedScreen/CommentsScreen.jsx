@@ -23,7 +23,6 @@ export const CommentsScreen = ({ route }) => {
   const [commentList, setCommentList] = useState([]);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const { nickName } = useSelector((state) => state.auth);
-  console.log(commentList);
   const { photo, id } = route.params.item;
 
   const createPosts = async () => {
@@ -47,13 +46,12 @@ export const CommentsScreen = ({ route }) => {
   };
   useEffect(() => {
     getAllPostsComments();
-  }, []);
+  }, [commentList]);
 
   const commentHandler = (text) => setComment(text);
 
   const onSubmitComment = () => {
     createPosts();
-    // setCommentList([...commentList, { comment, data }]);
     setIsShowKeyboard(false);
     keyboardHide();
     setComment("");
@@ -81,7 +79,7 @@ export const CommentsScreen = ({ route }) => {
             // marginHorizontal: 10,
             height: 240,
             width: "100%",
-            borderRadius: 8,
+            overflow: "hidden",
             marginBottom: 8,
           }}
         />
@@ -119,6 +117,19 @@ export const CommentsScreen = ({ route }) => {
                     fontSize: 13,
                     lineHeight: 18,
                     color: "#212121",
+
+                    fontWeight: "700",
+                    textAlign: item.nickName !== nickName ? "left" : "right",
+                  }}
+                >
+                  {item.nickName}
+                </Text>
+                <Text
+                  style={{
+                    overflow: "hidden",
+                    fontSize: 13,
+                    lineHeight: 18,
+                    color: "#212121",
                     marginBottom: 8,
                   }}
                 >
@@ -128,6 +139,7 @@ export const CommentsScreen = ({ route }) => {
                   style={{
                     fontSize: 10,
                     color: "#BDBDBD",
+                    textAlign: item.nickName !== nickName ? "left" : "right",
                   }}
                 >
                   {item.data}
@@ -137,7 +149,7 @@ export const CommentsScreen = ({ route }) => {
                 style={{
                   width: 28,
                   height: 28,
-                  borderRadius: "50%",
+                  borderRadius: 12,
                   backgroundColor: "#000",
                 }}
               ></View>
@@ -205,7 +217,7 @@ const styles = StyleSheet.create({
     borderColor: "#bdbdbd",
     borderWidth: 1,
 
-    borderRadius: "50%",
+    borderRadius: 22,
   },
   btn: {
     position: "absolute",
@@ -213,7 +225,7 @@ const styles = StyleSheet.create({
     right: 10,
     width: 34,
     height: 34,
-    borderRadius: "50%",
+    borderRadius: 17,
     backgroundColor: "#FF6C00",
     alignItems: "center",
     justifyContent: "center",

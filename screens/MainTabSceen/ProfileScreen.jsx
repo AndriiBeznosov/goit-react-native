@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   containerForm: {
     flex: 0.8,
-    position: "relative",
+    // position: "relative",
     // alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 72,
@@ -96,7 +96,9 @@ const styles = StyleSheet.create({
   },
   photo: {
     position: "absolute",
-    left: 150,
+    left: "50%",
+    transform: [{ translateX: -50 }],
+    // marginHorizontal: "auto",
     top: -60,
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
@@ -116,57 +118,4 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     textAlign: "center",
   },
-
-  // input: {
-  //   height: 50,
-  //   padding: 16,
-  //   borderWidth: 1,
-  //   borderRadius: 8,
-  //   borderColor: "#E8E8E8",
-  //   backgroundColor: "#F6F6F6",
-  // },
-  // inputText: {
-  //   fontSize: 16,
-  //   fontFamily: "Roboto-Regular",
-  // },
-  // password: {
-  //   position: "relative",
-  //   height: 50,
-  //   padding: 16,
-  //   borderWidth: 1,
-  //   borderRadius: 8,
-  //   borderColor: "#E8E8E8",
-  //   backgroundColor: "#F6F6F6",
-  // },
-  // show: {
-  //   position: "absolute",
-  //   right: 16,
-  //   top: 14,
-  // },
-  // showText: {
-  //   fontSize: 16,
-  //   color: "#1B4371",
-  // },
-  // button: {
-  //   height: 51,
-  //   padding: 16,
-  //   backgroundColor: "#FF6C00",
-  //   borderRadius: 100,
-  //   alignItems: "center",
-  //   marginTop: 43,
-  // },
-  // textButton: {
-  //   fontFamily: "Roboto-Regular",
-  //   fontSize: 16,
-  //   lineHeight: 19,
-  //   color: "#ffffff",
-  // },
-  // textLogin: {
-  //   fontFamily: "Roboto-Regular",
-  //   fontSize: 16,
-  //   lineHeight: 19,
-  //   color: "#1B4371",
-  //   textAlign: "center",
-  //   marginTop: 16,
-  // },
 });

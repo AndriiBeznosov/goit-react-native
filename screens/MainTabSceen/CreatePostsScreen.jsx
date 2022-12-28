@@ -45,6 +45,7 @@ export const CreatePostsScreen = ({ navigation }) => {
 
   const namePhotoHandler = (text) => setNamePhoto(text);
 
+  console.log(photo);
   const clearFormPost = () => {
     setPhoto(null);
     setNamePhoto("");
@@ -130,7 +131,7 @@ export const CreatePostsScreen = ({ navigation }) => {
     uploadPostToServer();
     await navigation.navigate("Posts", data);
 
-    setPhoto("");
+    setPhoto(null);
     setNamePhoto("");
     keyboardHide();
     setColorBtn("#F6f6f6");
@@ -193,7 +194,7 @@ export const CreatePostsScreen = ({ navigation }) => {
                 </View>
                 <TouchableOpacity
                   style={styles.refreshPhoto}
-                  onPress={() => setPhoto("")}
+                  onPress={() => setPhoto(null)}
                 >
                   <MaterialCommunityIcons
                     name="camera-retake-outline"
@@ -203,15 +204,12 @@ export const CreatePostsScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </>
             ) : (
-              <TouchableOpacity
-                style={styles.btnCamera}
-                onPress={!photo ? takePhoto : refreshPhoto}
-              >
-                <MaterialIcons name="camera-alt" size={35} color="#bdbdbd" />
+              <TouchableOpacity style={styles.btnCamera} onPress={takePhoto}>
+                <MaterialIcons name="camera-alt" size={35} color="#fff" />
               </TouchableOpacity>
             )}
           </Camera>
-          <Text style={styles.title}>Загрузите фото </Text>
+
           <View style={styles.input}>
             <TextInput
               inputType="text"
@@ -228,7 +226,6 @@ export const CreatePostsScreen = ({ navigation }) => {
               style={{
                 ...styles.inputText,
                 paddingLeft: 30,
-                position: "relative",
               }}
               value={
                 locationCity
@@ -285,36 +282,26 @@ const styles = StyleSheet.create({
     paddingTop: 32,
     paddingLeft: 16,
     paddingRight: 16,
-    // paddinrBottom: 32,
     backgroundColor: "#fff",
-    // backgroundColor: "#fff342",
   },
   camera: {
-    position: "relative",
-    // height: 240,
-    borderRadius: 8,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#e8e8e8",
+    borderColor: "#212121",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f6f6f6",
+    backgroundColor: "red",
     marginBottom: 8,
   },
   btnCamera: {
     width: 60,
     height: 60,
-    borderRadius: "50%",
-    backgroundColor: "#fff",
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "red",
+    backgroundColor: "silver",
     justifyContent: "center",
     alignItems: "center",
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "400",
-    lineHeight: 19,
-    color: "#bdbdbd",
-    marginBottom: 32,
   },
   inputText: {
     fontSize: 16,
@@ -337,7 +324,7 @@ const styles = StyleSheet.create({
     height: 51,
     padding: 16,
     // backgroundColor: "#f6f6f6",
-    borderRadius: 100,
+    borderRadius: 20,
     alignItems: "center",
   },
   textButton: {
@@ -350,7 +337,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 70,
     backgroundColor: "#f6f6f6",
-    borderRadius: 100,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
     marginLeft: "auto",

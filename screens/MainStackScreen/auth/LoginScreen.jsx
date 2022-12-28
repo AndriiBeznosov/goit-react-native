@@ -1,7 +1,4 @@
-// //LoginScreen
-
 import React, { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   View,
@@ -13,17 +10,13 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
-  Image,
   Dimensions,
 } from "react-native";
 import { useDispatch } from "react-redux";
-// import { isLoginOn } from "../../../redux/auth/slice";
-
 import { authSignInUser } from "../../../redux/auth/operations";
 
 export const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -39,11 +32,6 @@ export const LoginScreen = ({ navigation }) => {
       setDimensions(width);
     };
     Dimensions.addEventListener("change", onChange);
-
-    // return () => subscription?.remove();
-    // return () => {
-    //   Dimensions.removeEventListener("change", onChange);
-    // };
   }, []);
 
   const emailHandler = (text) => setEmail(text);
@@ -62,8 +50,6 @@ export const LoginScreen = ({ navigation }) => {
     dispatch(authSignInUser({ email, password }));
     setEmail("");
     setPassword("");
-    // setState(initialState);
-    // navigation.navigate("Home");
   };
 
   const keyboardHide = () => {
@@ -97,12 +83,12 @@ export const LoginScreen = ({ navigation }) => {
                 }}
               >
                 <TextInput
-                  autoFocus={true}
                   inputType={email}
                   style={styles.inputText}
                   value={email}
                   placeholder="Адреса електронної пошти"
                   onChangeText={emailHandler}
+                  onFocus={() => setIsShowKeyboard(true)}
                 />
               </View>
               <View
@@ -140,7 +126,6 @@ export const LoginScreen = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             </View>
-            <StatusBar style="auto" />
           </KeyboardAvoidingView>
         </ImageBackground>
       </View>

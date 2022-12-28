@@ -69,7 +69,7 @@ export const RegistrationScreen = ({ navigation }) => {
           source={require("../../../assets/images/PhotoBG.jpg")}
         >
           <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            behavior={Platform.OS == "ios" ? "padding" : "heigth"}
           >
             <View
               style={{
@@ -152,7 +152,6 @@ export const RegistrationScreen = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             </View>
-            {/* <StatusBar style="auto" /> */}
           </KeyboardAvoidingView>
         </ImageBackground>
       </View>
@@ -179,7 +178,7 @@ const styles = StyleSheet.create({
   },
   photo: {
     position: "absolute",
-    left: 150,
+    marginHorizontal: "auto",
     top: -60,
     backgroundColor: "#F6F6F6",
     borderRadius: 16,

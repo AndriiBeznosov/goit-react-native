@@ -13,7 +13,7 @@ import { authSignOutUser } from "../../redux/auth/operations";
 
 const Stack = createNativeStackNavigator();
 
-export const DefaultPostsScreen = ({ navigation }) => {
+export const DefaultPostsScreen = () => {
   const dispatch = useDispatch();
 
   const signOut = () => {
